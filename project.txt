@@ -27,3 +27,10 @@ Hints:
 
 The Bonus:
 - Make the App to accept SQL Code or  Use GUI instead of the above menu based 
+
+=====================================================================================================================
+=====================================================================================================================
+
+-Base file:
+1. create a select menu with the main menu option 
+2. each option excution calls a specific function ((in a separate file?)) using switch case for example
