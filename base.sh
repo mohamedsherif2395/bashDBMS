@@ -41,7 +41,7 @@ function listD {
 function connectD {
 	echo "please Enter database name to connect: "
 	read database
-	cd ./quickbase/$database
+	cd ./quickbase/$database 2> /dev/null
 	select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
 	do
 		case $action in
@@ -96,11 +96,62 @@ function dropD {
 }
 
 function createT {
-echo "table func"
+	echo "Enter Table name: "
+	read table
+	if [[ -f $table ]]
+	then 
+		echo "table already exists!"
+		connectD
+	else
+		touch $table
+		echo "table created succesfully!"
+	fi
+	
+	echo "Enter Number of fields: "
+	read fields
+#	if  [[ $fields =~ '[0-9]' ]]
+#	then 
+		flag="true"
+		for (( i=1; i<=$fields; i++ ))
+		do
+			echo "Enter ${i} field name: "
+			read colname
+			while [ $flag == "true" ]
+			do
+				echo "is this a PK[Y/N]?"
+				read pk
+				if [[ $pk == "Y" || $pk == "y" || $pk == "yes" ]]
+				then
+					flag="false"
+					echo -n "(PK)" >> $table
+				else
+					break
+				fi
+			done
+			echo "Choose data type from (int , string)"
+			read datatype
+			case $datatype in
+				int)
+				echo -n $colname"($datatype) " >> $table;;
+				string)
+				echo -n $colname"($datatype) " >> $table;;
+				*)
+				echo "Data type incorrect!";
+				(( i = $i - 1 ));;
+				
+			esac
+		done
+		clear
+		connectD
+#	else
+#		echo "$fields is not a number"
+#	fi	
+
+
 }
 
 function listT {
-echo "table func"
+	ls
 }
 
 function dropT {
