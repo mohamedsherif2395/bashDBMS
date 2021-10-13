@@ -39,6 +39,7 @@ function listD {
 	ls ./quickbase 
 }
 function connectD {
+
 	echo "please Enter database name to connect: "
 	read database
 	cd ./quickbase/$database 2> /dev/null
@@ -142,6 +143,7 @@ function createT {
 			esac
 		done
 		clear
+		echo "your table $table created"
 		connectD
 #	else
 #		echo "$fields is not a number"
@@ -159,7 +161,40 @@ echo "table func"
 }
 
 function insertT {
-echo "table func"
+echo "please enter table name to insert data"
+read table
+if [[ -f $table ]]
+	then 
+	        x=`grep 'PK' $table | wc -w`
+	        echo " " >> $table
+	        awk '{if (NR==1) print $0}' $table
+	        for((i=1;i <= x;i++)) 
+	        do
+	            
+	            echo "enter $i field data"
+	            read data 
+	            echo -n $data" " >> $table
+	        done
+		 
+		
+		
+		
+	else
+		echo "table doesn't exist"
+		echo "do you want to create it? [Y/N]"
+		read answer
+		case $answer in
+				Y)
+				createT;;
+				N)
+				insertT;;
+				*)
+				echo "Please enter correct answer" ;
+				insertT;;
+				
+				
+			esac
+	fi
 }
 
 function selectT {
