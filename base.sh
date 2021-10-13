@@ -157,7 +157,16 @@ function listT {
 }
 
 function dropT {
-echo "table func"
+echo "enter the dropped table name"
+read drop
+if [[ -f $drop ]]
+	then 
+	rm $drop
+	echo "$drop deleted!"	
+	else
+	echo "table not found"
+	dropT
+	fi
 }
 
 function insertT {
