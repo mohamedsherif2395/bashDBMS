@@ -1,6 +1,7 @@
 #! /bin/bash
 #this is a free software simulating a DBMS using shell scripting
  
+function mainMenu {
 clear
 echo "							Welcome to QuickBase
 	
@@ -11,7 +12,6 @@ echo "							Welcome to QuickBase
 				
 				"
 
-function mainMenu {
 select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop Database'
 do
 	case $main in
@@ -24,13 +24,13 @@ do
 	'Drop Database')
 		dropD;;
 	*)
-		echo "please choose from {1..4}"
+		echo "Please choose from {1..4}"
 	esac
 done
 }
 
 function createD {
-	echo "please Enter database name: "
+	echo "Please enter database name: "
 	read database
 	mkdir -p ./quickbase/$database
 	echo "$database has been created"
@@ -40,7 +40,7 @@ function listD {
 }
 function connectD {
 
-	echo "please Enter database name to connect: "
+	echo "Please Enter database name: "
 	read database
 	cd ./quickbase/$database 2> /dev/null
 	select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
@@ -61,18 +61,28 @@ function connectD {
 		'Update Table')
 			updateT;;
 		*)
-			echo "please choose from {1..7}";;
+			echo "Back to main menu? [Y/N]"
+			read back
+			if [[ $back == "Y" || $back == "y" || $back == "yes" ]]
+			then
+				mainMenu
+			else
+				echo "Usage: select a database then choose an option from {1..7}"
+				sleep 4
+				clear
+				connectD
+			fi
 		esac
 done	
 }
 function dropD {
-	echo "please Enter database name: "
+	echo "Please Enter database name: "
 	read database
 	rm -r ./quickbase/$database
 	echo "$database has been removed successfully"
 }
 function createT {
-	echo "Enter Table name: "
+	echo "Please enter table name: "
 	read table
 	if [[ -f $table ]]
 	then 
@@ -83,18 +93,18 @@ function createT {
 		echo "table created succesfully!"
 	fi
 	
-	echo "Enter Number of fields: "
+	echo "Please enter Number of fields: "
 	read fields
 #	if  [[ $fields =~ '[0-9]' ]]
 #	then 
 		flag="true"
 		for (( i=1; i<=$fields; i++ ))
 		do
-			echo "Enter name for filed no.$i: "
+			echo "Please enter name for filed no.$i: "
 			read colname
 			while [ $flag == "true" ]
 			do
-				echo "is this a PK[Y/N]?"
+				echo "Is this a PK? [Y/N]"
 				read pk
 				if [[ $pk == "Y" || $pk == "y" || $pk == "yes" ]]
 				then
@@ -118,7 +128,7 @@ function createT {
 			esac
 		done
 		clear
-		echo "your table $table created"
+		echo "Your table $table created"
 		connectD
 #	else
 #		echo "$fields is not a number"
@@ -128,19 +138,19 @@ function listT {
 	ls
 }
 function dropT {
-echo "enter the dropped table name"
+echo "Please select table: "
 read drop
 if [[ -f $drop ]]
 	then 
 	rm $drop
 	echo "$drop deleted!"	
 	else
-	echo "table not found"
+	echo "Table not found"
 	dropT
 	fi
 }
 function insertT {
-echo "please enter table name to insert data"
+echo "Please select table: "
 read table
 if [[ -f $table ]]
 	then 
@@ -149,13 +159,13 @@ if [[ -f $table ]]
 	        awk '{if (NR==1) print $0}' $table
 	        for((i=1;i <= x;i++)) 
 	        do            
-	        	echo "enter data for field no. $i"
+	        	echo "Please enter data for field no. $i"
 	        	read data 
 	        	echo -n $data" " >> $table
 	        done	
 	else
-		echo "table doesn't exist"
-		echo "do you want to create it? [Y/N]"
+		echo "Table doesn't exist"
+		echo "Do you want to create it? [Y/N]"
 		read answer
 		case $answer in
 			Y)
@@ -169,20 +179,31 @@ if [[ -f $table ]]
 	fi
 }
 function selectT {
-echo "please enter table name to select data"
+echo "Please select table: "
 read table
 if [[ -f $table ]]
 	then
 		echo ""
 	        awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
 	        echo ""
-	        echo "enter field value to select record(s): "
+	        echo "Please enter field value to select record(s): "
 	        read field
 	        echo ""
 	        awk -v pat=$field '$0~pat{for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}' $table	
+	        echo "Do you want to make another query? [Y/N]"
+	        read answer
+	        if [[ $answer == "Y" || $answer == "y" || $answer == "yes" ]]
+		then
+			clear
+			selectT
+		else
+			echo "Returning to main menu.."
+			sleep 3
+			mainMenu
+		fi
 	else
-		echo "table doesn't exist"
-		echo "do you want to create it? [Y/N]"
+		echo "Table doesn't exist"
+		echo "Do you want to create it? [Y/N]"
 		read answer
 		case $answer in
 				Y)
@@ -198,45 +219,78 @@ if [[ -f $table ]]
 	fi
 }
 function deleteT {
-echo "please enter table name to delete from"
+echo "Please select table: "
 read table
 if [[ -f $table ]]
+then
+	echo ""
+	awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
+	echo ""
+	echo "Please enter field value to delete record(s): "
+	read field
+	echo ""
+	if grep -q ${field} $table 
 	then
-		echo ""
-		awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
-		echo ""
-		echo "enter filed value to delete record(s): "
-		read field
-		echo ""
-		if grep -q ${field} $table 
-		then
-  			sed -i /"${field}/"d $table
-  			echo "Record(s) deleted successfully!
-  			"
-  		else
-  			echo "No such entry in the table!
-  			"
-  			deleteT
-		fi
+		sed -i /"${field}/"d $table
+		echo "Record(s) deleted successfully!
+		"
 	else
-		echo "table doesn't exist"
-		echo "do you want to create it? [Y/N]"
-		read answer
-		case $answer in
-				Y)
-				createT;;
-				N)
-				deleteT;;
-				*)
-				echo "Incorrect answer" ;
-				deleteT;;
-				
-				
-			esac
+		echo "No such entry in the table!
+		"
+		deleteT
+	fi
+else
+	echo "Table doesn't exist"
+	echo "Do you want to create it? [Y/N]"
+	read answer
+	case $answer in
+		Y)
+		createT;;
+		N)
+		deleteT;;
+		*)
+		echo "Incorrect answer" ;
+		deleteT;;			
+	esac
 	fi
 }
 
 function updateT {
-echo "table func"
+echo "Please select table: "
+read table
+if [[ -f $table ]]
+then
+	echo ""
+	awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
+	echo ""
+	echo "Please enter field value to update: "
+	read old
+	echo ""
+	if grep -q ${old} $table 
+	then
+		echo "Please enter new value: "
+		read new
+		sed -i s/$old/$new/g $table
+		echo "Record(s) updated successfully!
+		"
+	else
+		echo "No such value in the table!
+		"
+		updateT
+	fi
+else
+	echo "Table doesn't exist"
+	echo "Do you want to create it? [Y/N]"
+	read answer
+	case $answer in
+		Y)
+		createT;;
+		N)
+		updateT;;
+		*)
+		echo "Incorrect answer" ;
+		updateT;;			
+	esac
+	fi
 }
 mainMenu

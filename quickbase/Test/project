@@ -1,0 +1,4 @@
+(PK)Number(int) Name(string) Location(string) employees(int)  
+1 DBMS mansoura 2  
+2 "web app" cairo 5  
+3 reservations mans 4 
