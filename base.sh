@@ -48,41 +48,18 @@ function connectD {
 		case $action in
 		'Create Table')
 			createT;;
-#			echo 'please enter table name: '
-#			read
-#			touch $REPLY;;
 		'List Tables')
 			listT;;
-#			ls;;
 		'Drop Table')
 			dropT;;
-#			echo 'please enter table name: '
-#			read
-#			rm $REPLY;; 
 		'Insert into Table')
 			insertT;;
-#			echo 'please enter table name: '
-#			read
-#			gedit $REPLY;;
 		'Select From Table')
 			selectT;;
-#			echo 'please enter table name: '
-#			read table
-#			echo 'please enter emp name: '
-#			read record
-#			cat $table | grep $record;;
 		'Delete From Table')
 			deleteT;;
-#			echo 'please enter table name: '
-#			read table
-#			echo 'please enter emp name: '
-#			read record
-#			echo "$record deleted from $table";;
 		'Update Table')
 			updateT;;
-#			echo 'please enter table name: '
-#			read table
-#			echo "$table updated";;
 		*)
 			echo "please choose from {1..7}";;
 		esac
