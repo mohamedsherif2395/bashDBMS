@@ -63,8 +63,7 @@ function connectD {
 		*)
 			echo "please choose from {1..7}";;
 		esac
-done
-	
+done	
 }
 function dropD {
 	echo "please Enter database name: "
@@ -72,7 +71,6 @@ function dropD {
 	rm -r ./quickbase/$database
 	echo "$database has been removed successfully"
 }
-
 function createT {
 	echo "Enter Table name: "
 	read table
@@ -92,7 +90,7 @@ function createT {
 		flag="true"
 		for (( i=1; i<=$fields; i++ ))
 		do
-			echo "Enter ${i} field name: "
+			echo "Enter name for filed no.$i: "
 			read colname
 			while [ $flag == "true" ]
 			do
@@ -125,14 +123,10 @@ function createT {
 #	else
 #		echo "$fields is not a number"
 #	fi	
-
-
 }
-
 function listT {
 	ls
 }
-
 function dropT {
 echo "enter the dropped table name"
 read drop
@@ -145,7 +139,6 @@ if [[ -f $drop ]]
 	dropT
 	fi
 }
-
 function insertT {
 echo "please enter table name to insert data"
 read table
@@ -155,57 +148,38 @@ if [[ -f $table ]]
 	        echo " " >> $table
 	        awk '{if (NR==1) print $0}' $table
 	        for((i=1;i <= x;i++)) 
-	        do
-	            
-	            echo "enter $i field data"
-	            read data 
-	            echo -n $data" " >> $table
-	        done
-		 
-		
-		
-		
+	        do            
+	        	echo "enter data for field no. $i"
+	        	read data 
+	        	echo -n $data" " >> $table
+	        done	
 	else
 		echo "table doesn't exist"
 		echo "do you want to create it? [Y/N]"
 		read answer
 		case $answer in
-				Y)
-				createT;;
-				N)
-				insertT;;
-				*)
-				echo "Please enter correct answer" ;
-				insertT;;
-				
-				
-			esac
+			Y)
+			createT;;
+			N)
+			insertT;;
+			*)
+			echo "Please enter correct answer" ;
+			insertT;;	
+		esac
 	fi
 }
-
 function selectT {
 echo "please enter table name to select data"
 read table
 if [[ -f $table ]]
 	then
-	        echo "enter value to select the row"
+		echo ""
+	        awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
+	        echo ""
+	        echo "enter field value to select record(s): "
 	        read field
-	        awk '{if (NR==1) print $0}' $table
-	        echo `grep $field $table` 
-	        #x=`grep 'PK' $table | wc -w`
-	        #echo " " >> $table
-	        #awk '{if (NR==1) print $0}' $table
-	        #for((i=1;i <= x;i++)) 
-	        #do
-	            
-	            #echo "enter $i field data"
-	            #read data 
-	            #echo -n $data" " >> $table
-	        #done
-		 
-		
-		
-		
+	        echo ""
+	        awk -v pat=$field '$0~pat{for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}' $table	
 	else
 		echo "table doesn't exist"
 		echo "do you want to create it? [Y/N]"
@@ -214,21 +188,52 @@ if [[ -f $table ]]
 				Y)
 				createT;;
 				N)
-				insertT;;
+				selectT;;
 				*)
-				echo "Please enter correct answer" ;
-				insertT;;
+				echo "Incorrect answer" ;
+				selectT;;
 				
 				
 			esac
 	fi
 }
-
-
-
-
 function deleteT {
-echo "table func"
+echo "please enter table name to delete from"
+read table
+if [[ -f $table ]]
+	then
+		echo ""
+		awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
+		echo ""
+		echo "enter filed value to delete record(s): "
+		read field
+		echo ""
+		if grep -q ${field} $table 
+		then
+  			sed -i /"${field}/"d $table
+  			echo "Record(s) deleted successfully!
+  			"
+  		else
+  			echo "No such entry in the table!
+  			"
+  			deleteT
+		fi
+	else
+		echo "table doesn't exist"
+		echo "do you want to create it? [Y/N]"
+		read answer
+		case $answer in
+				Y)
+				createT;;
+				N)
+				deleteT;;
+				*)
+				echo "Incorrect answer" ;
+				deleteT;;
+				
+				
+			esac
+	fi
 }
 
 function updateT {
