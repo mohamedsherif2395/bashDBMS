@@ -1,79 +1,125 @@
 #! /bin/bash
+#this is a free software simulating a DBMS using shell scripting
+ 
+clear
+echo "							Welcome to QuickBase
+	
+			     a lightweight, simple and quick DBMS for simple CLI database management tasks
+				
+					       Authors: Mohamed Sherif & Micheal Adel
+				     Find us on Github at:  @mohamedsherif2395 & @Micheal-adel98
+				
+				"
 
-#. ./functions.sh
+function mainMenu {
 select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop Database'
 do
 	case $main in
 	'Create Database')
-		CreateDB;;
+		createD;;
 	'List Databases')
-		ListDB;;
+		listD;;
 	'Connect To Databases')
-		ConnectDB;;
+		connectD;;
 	'Drop Database')
-		DropDB;;
+		dropD;;
 	*)
-		echo "please choose from {1,2,3,4}"
+		echo "please choose from {1..4}"
 	esac
 done
+}
 
-function CreateDB ()
-{
+function createD {
 	echo "please Enter database name: "
 	read database
-	mkdir $database
+	mkdir -p ./quickbase/$database
 	echo "$database has been created"
 }
-function ListDB ()
-{
-	ls */
+function listD {
+	ls ./quickbase 
 }
-function ConnectDB ()
-{
+function connectD {
 	echo "please Enter database name to connect: "
 	read database
-	cd $database
+	cd ./quickbase/$database
 	select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
 	do
 		case $action in
 		'Create Table')
-			echo 'please enter table name: '
-			read
-			touch $REPLY;;
+			createT;;
+#			echo 'please enter table name: '
+#			read
+#			touch $REPLY;;
 		'List Tables')
-			ls;;
+			listT;;
+#			ls;;
 		'Drop Table')
-			echo 'please enter table name: '
-			read
-			rm $REPLY;; 
+			dropT;;
+#			echo 'please enter table name: '
+#			read
+#			rm $REPLY;; 
 		'Insert into Table')
-			echo 'please enter table name: '
-			read
-			gedit $REPLY;;
+			insertT;;
+#			echo 'please enter table name: '
+#			read
+#			gedit $REPLY;;
 		'Select From Table')
-			echo 'please enter table name: '
-			read table
-			echo 'please enter emp name: '
-			read record
-			cat $table | grep $record;;
+			selectT;;
+#			echo 'please enter table name: '
+#			read table
+#			echo 'please enter emp name: '
+#			read record
+#			cat $table | grep $record;;
 		'Delete From Table')
-			echo 'please enter table name: '
-			read table
-			echo 'please enter emp name: '
-			read record
-			echo "$record deleted from $table";;
+			deleteT;;
+#			echo 'please enter table name: '
+#			read table
+#			echo 'please enter emp name: '
+#			read record
+#			echo "$record deleted from $table";;
 		'Update Table')
-			echo 'please enter table name: '
-			read table
-			echo "$table updated";;
+			updateT;;
+#			echo 'please enter table name: '
+#			read table
+#			echo "$table updated";;
 		*)
-			echo "please choose from {1,2,3,4,5,6,7}";;
+			echo "please choose from {1..7}";;
 		esac
 done
 	
 }
-function DropDB ()
-{
-	echo "DropDB is called"
+function dropD {
+	echo "please Enter database name: "
+	read database
+	rm -r ./quickbase/$database
+	echo "$database has been removed successfully"
 }
 
+function createT {
+echo "table func"
+}
+
+function listT {
+echo "table func"
+}
+
+function dropT {
+echo "table func"
+}
+
+function insertT {
+echo "table func"
+}
+
+function selectT {
+echo "table func"
+}
+
+function deleteT {
+echo "table func"
+}
+
+function updateT {
+echo "table func"
+}
+mainMenu
