@@ -207,8 +207,48 @@ if [[ -f $table ]]
 }
 
 function selectT {
-echo "table func"
+echo "please enter table name to select data"
+read table
+if [[ -f $table ]]
+	then
+	        echo "enter value to select the row"
+	        read field
+	        awk '{if (NR==1) print $0}' $table
+	        echo `grep $field $table` 
+	        #x=`grep 'PK' $table | wc -w`
+	        #echo " " >> $table
+	        #awk '{if (NR==1) print $0}' $table
+	        #for((i=1;i <= x;i++)) 
+	        #do
+	            
+	            #echo "enter $i field data"
+	            #read data 
+	            #echo -n $data" " >> $table
+	        #done
+		 
+		
+		
+		
+	else
+		echo "table doesn't exist"
+		echo "do you want to create it? [Y/N]"
+		read answer
+		case $answer in
+				Y)
+				createT;;
+				N)
+				insertT;;
+				*)
+				echo "Please enter correct answer" ;
+				insertT;;
+				
+				
+			esac
+	fi
 }
+
+
+
 
 function deleteT {
 echo "table func"
