@@ -30,20 +30,40 @@ done
 }
 
 function createD {
-	echo "Please enter database name: "
-	read database
-	mkdir -p ./quickbase/$database
-	echo "$database has been created"
+
+      echo "Please enter database name to create it: "
+      read database
+      if ! [[ -d ./quickbase/$database ]]
+      then
+	      mkdir -p ./quickbase/$database
+	      echo "$database has been created"
+	else
+	      echo "the $database is already created"
+	      echo "Do you want to connect it? [Y/N]"
+	      read answer
+	      case $answer in
+			Y)
+			connectD;;
+			N)
+			createD;;
+			*)
+			echo "Please enter correct answer" ;
+			createD;;	
+		esac
+	fi	
 }
 function listD {
 	ls ./quickbase 
 }
 function connectD {
 
-	echo "Please Enter database name: "
+	echo "Please Enter database name to connect it: "
 	read database
-	cd ./quickbase/$database 2> /dev/null
-	select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
+	if [[ -d ./quickbase/$database ]]
+	then 
+	
+	       cd ./quickbase/$database 2> /dev/null
+	       select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
 	do
 		case $action in
 		'Create Table')
@@ -73,16 +93,47 @@ function connectD {
 				connectD
 			fi
 		esac
-done	
+done
+       else 
+               echo "no database with $database name"
+               echo "Do you want to create it? [Y/N]"
+		read answer
+		case $answer in
+			Y)
+			createD;;
+			N)
+			connectD;;
+			*)
+			echo "Please enter correct answer" ;
+			connectD;;	
+		esac
+	fi	
 }
 function dropD {
-	echo "Please Enter database name: "
+	echo "Please Enter database name to delete: "
 	read database
-	rm -r ./quickbase/$database
-	echo "$database has been removed successfully"
+	if [[ -d ./quickbase/$database ]]
+        then
+	      rm -r ./quickbase/$database
+	      echo "$database has been removed successfully"
+	else 
+	      echo "no database match this name!"
+	      echo "do you want to list the database names? [Y/N]"
+	      read answer
+	      case $answer in
+			Y)
+			listD;;
+			N)
+			dropD;;
+			*)
+			echo "Please enter correct answer" ;
+			dropD;;	
+		esac
+	fi	
+	      
 }
 function createT {
-	echo "Please enter table name: "
+	echo "Please enter table name to create it: "
 	read table
 	if [[ -f $table ]]
 	then 
@@ -138,7 +189,7 @@ function listT {
 	ls
 }
 function dropT {
-echo "Please select table: "
+echo "Please select table to delete it: "
 read drop
 if [[ -f $drop ]]
 	then 
@@ -150,15 +201,18 @@ if [[ -f $drop ]]
 	fi
 }
 function insertT {
-echo "Please select table: "
+echo "Please enter table name to insert data: "
 read table
 if [[ -f $table ]]
-	then 
+	then
+	           
 	        x=`grep 'PK' $table | wc -w`
+	        
 	        echo " " >> $table
 	        awk '{if (NR==1) print $0}' $table
 	        for((i=1;i <= x;i++)) 
-	        do            
+	        do      
+	              
 	        	echo "Please enter data for field no. $i"
 	        	read data 
 	        	echo -n $data" " >> $table
@@ -176,10 +230,12 @@ if [[ -f $table ]]
 			echo "Please enter correct answer" ;
 			insertT;;	
 		esac
+        
 	fi
+	echo "insert done into $table"
 }
 function selectT {
-echo "Please select table: "
+echo "Please enter table name to select data: "
 read table
 if [[ -f $table ]]
 	then
@@ -219,7 +275,7 @@ if [[ -f $table ]]
 	fi
 }
 function deleteT {
-echo "Please select table: "
+echo "Please enter table name to delete it: "
 read table
 if [[ -f $table ]]
 then
@@ -256,7 +312,7 @@ else
 }
 
 function updateT {
-echo "Please select table: "
+echo "Please enter table name to update data: "
 read table
 if [[ -f $table ]]
 then
