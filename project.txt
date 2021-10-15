@@ -31,6 +31,32 @@ The Bonus:
 =====================================================================================================================
 =====================================================================================================================
 
--Base file:
-1. create a select menu with the main menu option 
-2. each option excution calls a specific function ((in a separate file?)) using switch case for example
+-check for data type:
+ create checkType function that is called in each field prompt and:
+a) accepts the input value and field number as its  parameters
+b) isolates the field header using field number and searches for "int" or "string" and enter an if statement accordingly
+c) checks if the input value is the correct data type
+=====================================================================================================================
+-check for existing (PK):
+ create a checkPK function that is called in each field prompt and:
+a) accepts input and value field number as parameters
+b) isolates the field header using field number and searches for "PK" and enter an if statement accordingly
+c) isolates field column using field number and search for input value if it already exists
+=====================================================================================================================
+=> Try to merge checkType and checkPK into one function <=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
