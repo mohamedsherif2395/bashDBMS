@@ -3,27 +3,32 @@
  
 function mainMenu {
 clear
-echo "							Welcome to QuickBase
-	
-			     a lightweight, simple and quick DBMS for simple CLI database management tasks
-				
+echo $'\n							 **Welcome to QuickBase**\n
+			     a lightweight, simple and quick DBMS for simple CLI database management tasks\n
 					       Authors: Mohamed Sherif & Micheal Adel
-				     Find us on Github at:  @mohamedsherif2395 & @Micheal-adel98
-				
-				"
+				     Find us on Github at:  @mohamedsherif2395 & @Micheal-adel98\n\n\n'
 
-select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop Database'
+echo "Please choose an option: 
+"
+select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop Database' 'Exit'
 do
 	case $main in
 	'Create Database')
+		echo ""
 		createD;;
 	'List Databases')
+		echo ""
 		listD;;
 	'Connect To Databases')
+		echo ""
 		connectD;;
 	'Drop Database')
+		echo ""
 		dropD;;
+	'Exit')
+		exitApp;;
 	*)
+		echo ""
 		echo "Please choose from {1..4}"
 	esac
 done
@@ -50,10 +55,13 @@ function createD {
 			echo "Please enter correct answer" ;
 			createD;;	
 		esac
-	fi	
+	fi
+	sleep 3
+	mainMenu
 }
 function listD {
-	ls ./quickbase 
+	ls ./quickbase
+	echo '' 
 }
 function connectD {
 
@@ -61,42 +69,47 @@ function connectD {
 	read database
 	if [[ -d ./quickbase/$database ]]
 	then 
-	
 	       cd ./quickbase/$database 2> /dev/null
-	       select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 'Update Table'
-	do
-		case $action in
-		'Create Table')
-			createT;;
-		'List Tables')
-			listT;;
-		'Drop Table')
-			dropT;;
-		'Insert into Table')
-			insertT;;
-		'Select From Table')
-			selectT;;
-		'Delete From Table')
-			deleteT;;
-		'Update Table')
-			updateT;;
-		*)
-			echo "Back to main menu? [Y/N]"
-			read back
-			if [[ $back == "Y" || $back == "y" || $back == "yes" ]]
-			then
-				mainMenu
-			else
-				echo "Usage: select a database then choose an option from {1..7}"
-				sleep 4
-				clear
-				connectD
-			fi
-		esac
-done
-       else 
-               echo "no database with $database name"
-               echo "Do you want to create it? [Y/N]"
+	       clear
+	       echo $'\nConnected to '${database}$' , Please choose an option: \n' 
+	       select action in 'Create Table' 'List Tables' 'Drop Table' 'Insert into Table' 'Select From Table' 'Delete From Table' 		'Update Table' 'Main Menu' 'Exit'
+		do
+			case $action in
+			'Create Table')
+				createT;;
+			'List Tables')
+				listT;;
+			'Drop Table')
+				dropT;;
+			'Insert into Table')
+				insertT;;
+			'Select From Table')
+				selectT;;
+			'Delete From Table')
+				deleteT;;
+			'Update Table')
+				updateT;;
+			'Main Menu')
+				mainMenu;;
+			'Exit')
+				exitApp;;
+			*)
+				echo "Back to main menu? [Y/N]"
+				read back
+				if [[ $back == "Y" || $back == "y" || $back == "yes" ]]
+				then
+					mainMenu
+				else
+					echo $'\nUsage: select a database then choose an option from {1..7}'
+					sleep 4
+					clear
+					connectD
+				fi
+			esac
+		done
+	else 
+		echo "no database with $database name"
+		echo $'\nDo you want to create it? [Y/N]\n'
 		read answer
 		case $answer in
 			Y)
@@ -348,5 +361,15 @@ else
 		updateT;;			
 	esac
 	fi
+}
+function exitApp {
+	clear;
+	echo $'\n\n\n\n\n\n\n
+						================================
+						| Thank you for using QuickBase |
+						================================ '
+	sleep 3
+	clear
+	exit
 }
 mainMenu
