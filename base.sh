@@ -14,21 +14,21 @@ select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop D
 do
 	case $main in
 	'Create Database')
-		echo ""
+		echo $'\n'
 		createD;;
 	'List Databases')
-		echo ""
+		echo $'\n'
 		listD;;
 	'Connect To Databases')
-		echo ""
+		echo $'\n'
 		connectD;;
 	'Drop Database')
-		echo ""
+		echo $'\n'
 		dropD;;
 	'Exit')
 		exitApp;;
 	*)
-		echo ""
+		echo $'\n'
 		echo "Please choose from {1..4}"
 	esac
 done
@@ -52,8 +52,9 @@ function createD {
 			N)
 			createD;;
 			*)
-			echo "Please enter correct answer" ;
-			createD;;	
+			echo "Incorect answer, Redirecting to main menu.." ;
+			sleep 3;
+			mainMenu;;	
 		esac
 	fi
 	sleep 3
@@ -90,22 +91,15 @@ function connectD {
 			'Update Table')
 				updateT;;
 			'Main Menu')
+				cd ../..
 				mainMenu;;
 			'Exit')
 				exitApp;;
 			*)
-				echo "Back to main menu? [Y/N]"
-				read back
-				if [[ $back == "Y" || $back == "y" || $back == "yes" ]]
-				then
-					mainMenu
-				else
-					echo $'\nUsage: select a database then choose an option from {1..7}'
-					cd ../..
-					sleep 4
-					clear
-					connectD
-				fi
+				echo "Incorect answer, Redirecting to main menu.." ;
+				cd ../..;
+				sleep 3;
+				mainMenu;;
 			esac
 		done
 	else 
@@ -116,10 +110,9 @@ function connectD {
 			Y)
 			createD;;
 			N)
-			cd ..
 			connectD;;
 			*)
-			echo "Incorect answer, Redirecting.." ;
+			echo "Incorect answer, Redirecting to main menu.." ;
 			sleep 3
 			mainMenu;;	
 		esac
@@ -142,8 +135,9 @@ function dropD {
 			N)
 			dropD;;
 			*)
-			echo "Please enter correct answer" ;
-			dropD;;	
+			echo "Incorrect answer. Redirecting to main menu.." ;
+			sleep 3;
+			mainMenu;;	
 		esac
 	fi	
 	      
@@ -154,6 +148,7 @@ function createT {
 	if [[ -f $table ]]
 	then 
 		echo "table already exists!"
+		cd ../..
 		connectD
 	else
 		touch $table
@@ -196,6 +191,7 @@ function createT {
 		done
 		clear
 		echo "Your table $table created"
+		cd ../..
 		connectD
 #	else
 #		echo "$fields is not a number"
@@ -231,8 +227,15 @@ if [[ -f $table ]]
 	              
 	        	echo "Please enter data for field no. $i"
 	        	read data 
-	        	echo -n $data" " >> $table
+			checkType $i $data
+	        	if [[ $? != 0 ]]
+	        	then
+	        		(( i = $i - 1 ))
+	        	else	
+	        		echo -n $data" " >> $table
+			fi
 	        done	
+		echo "insert done into $table"
 	else
 		echo "Table doesn't exist"
 		echo "Do you want to create it? [Y/N]"
@@ -243,12 +246,13 @@ if [[ -f $table ]]
 			N)
 			insertT;;
 			*)
-			echo "Please enter correct answer" ;
-			insertT;;	
+			echo "Incorrect answer. Redirecting to main menu.." ;
+			sleep 3;
+			cd ../..;
+			mainMenu;;	
 		esac
         
 	fi
-	echo "insert done into $table"
 }
 function selectT {
 echo "Please enter table name to select data: "
@@ -294,17 +298,18 @@ then
 			awk -v pat=$value '$0~pat{print $0}' $table | column -t -s ' '
 			echo $'========================================================================='	
 		fi
-		echo $'\nWould you like to make another query? [Y/N]'
-		read answer
-		if [[ $answer == "Y" || $answer == "y" || $answer == "yes" ]]
-		then
-			clear
-			selectT
-		else
-			echo "Returning to main menu.."
-			sleep 3
-			mainMenu
-		fi
+	fi
+	echo $'\nWould you like to make another query? [Y/N]'
+	read answer
+	if [[ $answer == "Y" || $answer == "y" || $answer == "yes" ]]
+	then
+		clear
+		selectT
+	else
+		echo "Redirecting to main menu.."
+		cd ../..
+		sleep 3
+		mainMenu
 	fi
 else
 	echo "Table doesn't exist"
@@ -316,35 +321,24 @@ else
 		N)
 		selectT;;
 		*)
-		echo "Incorrect answer" ;
-		select back in 'Back to Main Menu' 'Connect to database' 'Exit'
-		do
-			case $back in
-			'Back to Main Menu')
-				echo ""
-				mainMenu;;
-			'Connect to database')
-				echo ""
-				connectD;;
-			'Exit')
-				echo ""
-				exitApp;;
-			esac
-		done
+		echo "Incorrect answer. Redirecting to main menu.." ;
+		sleep 3;
+		cd ../..;
+		mainMenu;;
 	esac
 fi
 }
 function deleteT {
-echo "Please enter table name to delete it: "
+echo "Please enter table name to delete from: "
 read table
 if [[ -f $table ]]
 then
-	echo ""
+	echo $'\n'
 	awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
-	echo ""
+	echo $'\n'
 	echo "Please enter field value to delete record(s): "
 	read field
-	echo ""
+	echo $'\n'
 	if grep -q ${field} $table 
 	then
 		sed -i /"${field}/"d $table
@@ -365,8 +359,10 @@ else
 		N)
 		deleteT;;
 		*)
-		echo "Incorrect answer" ;
-		deleteT;;			
+		echo "Incorrect answer. Redirecting to main menu.." ;
+		sleep 2;
+		cd ../..;
+		mainMenu;;			
 	esac
 	fi
 }
@@ -376,23 +372,39 @@ echo "Please enter table name to update data: "
 read table
 if [[ -f $table ]]
 then
-	echo ""
+	echo $'\n'
 	awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
-	echo ""
-	echo "Please enter field value to update: "
-	read old
-	echo ""
-	if grep -q ${old} $table 
+	echo $'\n'
+	echo "Please enter field number to update: "
+	read fieldnum
+	fields=`awk '{print NF}' $table | head -1`
+	if [[ $fieldnum -gt $fields || $fieldnum -lt 1 ]]
 	then
-		echo "Please enter new value: "
-		read new
-		sed -i s/$old/$new/g $table
-		echo "Record(s) updated successfully!
-		"
-	else
-		echo "No such value in the table!
-		"
+		echo "Incorrect field number. Redirecting.."
+		sleep 2
 		updateT
+	else
+		echo "Please enter old value: "
+		read old
+		echo ""
+		if grep -q ${old} $table 
+		then
+			echo "Please enter new value: "
+			read new
+			checkType $fieldnum $new
+			if [[ $? != 0 ]]
+				then
+					echo "Incorrect data type entry. Redirecting.."
+					sleep 3
+					updateT
+				else	
+					sed -i s/$old/$new/g $table
+					echo $'Record(s) updated successfully!'
+				fi
+		else
+			echo $'No such value in the table!'
+			updateT
+		fi
 	fi
 else
 	echo "Table doesn't exist"
@@ -404,10 +416,32 @@ else
 		N)
 		updateT;;
 		*)
-		echo "Incorrect answer" ;
-		updateT;;			
+		echo "Incorrect answer. Redirecting to main menu.." ;
+		sleep 3;
+		cd ../..;
+		mainMenu;;			
 	esac
 	fi
+}
+function checkType {
+datatype=`grep PK $table | cut -f$1 -d" "`
+if [[ "$datatype" == *"int"* ]]
+then
+	num='^[0-9]+$'
+	if ! [[ $2 =~ $num ]]
+	then
+		echo "False input: Not a number!"
+		return 1
+	fi
+elif [[ "$datatype" == *"string"* ]]
+then
+	str='^[a-zA-Z0-9]+$'
+	if ! [[ $2 =~ $str ]]
+	then
+		echo "False input: Not a valid string!"
+		return 1
+	fi
+fi
 }
 function exitApp {
 	clear;
