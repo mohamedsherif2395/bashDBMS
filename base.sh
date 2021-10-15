@@ -101,6 +101,7 @@ function connectD {
 					mainMenu
 				else
 					echo $'\nUsage: select a database then choose an option from {1..7}'
+					cd ../..
 					sleep 4
 					clear
 					connectD
@@ -115,10 +116,12 @@ function connectD {
 			Y)
 			createD;;
 			N)
+			cd ..
 			connectD;;
 			*)
-			echo "Please enter correct answer" ;
-			connectD;;	
+			echo "Incorect answer, Redirecting.." ;
+			sleep 3
+			mainMenu;;	
 		esac
 	fi	
 }
@@ -251,17 +254,49 @@ function selectT {
 echo "Please enter table name to select data: "
 read table
 if [[ -f $table ]]
-	then
-		echo ""
-	        awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
-	        echo ""
-	        echo "Please enter field value to select record(s): "
-	        read field
-	        echo ""
-	        awk -v pat=$field '$0~pat{for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}' $table	
-	        echo "Do you want to make another query? [Y/N]"
-	        read answer
-	        if [[ $answer == "Y" || $answer == "y" || $answer == "yes" ]]
+then
+	echo $'\n'
+        awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
+        echo $'\nWould you like to print all records? [Y/N]'
+        read printall
+        if [[ $printall == "Y" || $printall == "y" || $printall == "yes" ]]
+        then
+        	echo $'\nWould you like to print a specific field? [Y/N]'
+		read cut1
+		if [[ $cut1 == "Y" || $cut1 == "y" || $cut1 == "yes" ]]
+		then
+			echo $'\nPlease specify field number: '
+			read field1
+			echo $'========================================================================='
+			awk $'{print $0\n}' $table | cut -f$field1 -d" "
+
+			echo $'========================================================================='
+		else
+			echo $'\n'
+			echo $'========================================================================='
+			column -t -s ' ' $table
+			echo $'=========================================================================\n'	
+		fi
+        else
+		echo $'\nPlease enter a search value to select record(s): '
+		read value
+		echo $'\nWould you like to print a specific field? [Y/N]'
+		read cut
+		if [[ $cut == "Y" || $cut == "y" || $cut == "yes" ]]
+		then
+			echo $'\nPlease specify field number: '
+			read field
+			echo $'========================================================================='
+			awk -v pat=$value $'$0~pat{print $0\n}' $table | cut -f$field -d" "
+			echo $'========================================================================='
+		else
+			echo $'========================================================================='
+			awk -v pat=$value '$0~pat{print $0}' $table | column -t -s ' '
+			echo $'========================================================================='	
+		fi
+		echo $'\nWould you like to make another query? [Y/N]'
+		read answer
+		if [[ $answer == "Y" || $answer == "y" || $answer == "yes" ]]
 		then
 			clear
 			selectT
@@ -270,22 +305,34 @@ if [[ -f $table ]]
 			sleep 3
 			mainMenu
 		fi
-	else
-		echo "Table doesn't exist"
-		echo "Do you want to create it? [Y/N]"
-		read answer
-		case $answer in
-				Y)
-				createT;;
-				N)
-				selectT;;
-				*)
-				echo "Incorrect answer" ;
-				selectT;;
-				
-				
-			esac
 	fi
+else
+	echo "Table doesn't exist"
+	echo "Do you want to create it? [Y/N]"
+	read answer
+	case $answer in
+		Y)
+		createT;;
+		N)
+		selectT;;
+		*)
+		echo "Incorrect answer" ;
+		select back in 'Back to Main Menu' 'Connect to database' 'Exit'
+		do
+			case $back in
+			'Back to Main Menu')
+				echo ""
+				mainMenu;;
+			'Connect to database')
+				echo ""
+				connectD;;
+			'Exit')
+				echo ""
+				exitApp;;
+			esac
+		done
+	esac
+fi
 }
 function deleteT {
 echo "Please enter table name to delete it: "
