@@ -8,26 +8,27 @@ echo $'\n							 **Welcome to QuickBase**\n
 					       Authors: Mohamed Sherif & Micheal Adel
 				     Find us on Github at:  @mohamedsherif2395 & @Micheal-adel98\n\n\n'
 
-echo $'Please choose an option:\n'
+echo "Please choose an option: 
+"
 select main in 'Create Database' 'List Databases' 'Connect To Databases' 'Drop Database' 'Exit'
 do
 	case $main in
 	'Create Database')
-		echo $'\n'
+		echo ""
 		createD;;
 	'List Databases')
-		echo $'\n'
+		echo ""
 		listD;;
 	'Connect To Databases')
-		echo $'\n'
+		echo ""
 		connectD;;
 	'Drop Database')
-		echo $'\n'
+		echo ""
 		dropD;;
 	'Exit')
 		exitApp;;
 	*)
-		echo $'\n'
+		echo ""
 		echo "Please choose from {1..4}"
 	esac
 done
