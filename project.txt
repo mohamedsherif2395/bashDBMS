@@ -48,7 +48,10 @@ c) isolates field column using field number and search for input value if it alr
 
 
 
-
+-updateT function bug fix:
+- separate the search phrase from the replace phrase:
+ 	1- search for records that has (regex1)
+ 	2- and replace (regex2) in that record with (regex3)
 
 
 
