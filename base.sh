@@ -221,11 +221,11 @@ if [[ -f $table ]]
 	        x=`grep 'PK' $table | wc -w`
 	        
 	        echo " " >> $table
-	        awk '{if (NR==1) print $0}' $table
+	        awk '{if (NR==1) {for(i=1;i<=NF;i++){printf "    |    "$i}{print "    |"}}}' $table
 	        for((i=1;i <= x;i++)) 
 	        do      
-	              
-	        	echo "Please enter data for field no. $i"
+	        	#columnName=`grep PK $table | cut -f$i -d" "`
+	        	echo $"Please enter data for field no.$i"
 	        	read data 
 			checkType $i $data
 	        	if [[ $? != 0 ]]
@@ -435,7 +435,7 @@ then
 	fi
 elif [[ "$datatype" == *"string"* ]]
 then
-	str='^[a-zA-Z0-9]+$'
+	str='^[a-zA-Z]+$'
 	if ! [[ $2 =~ $str ]]
 	then
 		echo "False input: Not a valid string!"
