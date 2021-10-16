@@ -1,5 +1,5 @@
 (PK)ID(int) Name(string) Dept(string) Salary(int)  
-1 mohamed web 5000  
+1 mohamed esh 5000  
 2 ail SD 3000  
 3 khaled Testing 4000
 3 adel Testing 5000
@@ -7,3 +7,6 @@
 3 zaki SD 4000
 3 emad ux/ui 3000 
 4 kekoooooo weeeeeeeeeeeeb 3000
+123 aliii weeeeb 12345  
+123 asdasd dasd 43124 
+

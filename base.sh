@@ -387,7 +387,7 @@ then
 		echo "Please enter old value: "
 		read old
 		echo ""
-		if grep -q ${old} $table 
+		if grep -w ${old} $table 
 		then
 			echo "Please enter new value: "
 			read new
@@ -398,7 +398,10 @@ then
 					sleep 3
 					updateT
 				else	
-					sed -i s/$old/$new/g $table
+				        #awk -v oldval=$old newval=$new ind=$fieldnum '{sed ''}' $table
+				        awk -F, '/esh,esh/ {$3="completed"} 1' $table
+				        #awk '{gsub(/esh/,"newval",$3); print $0}' $table >> $table 
+					#sed -i s/$old/$new/1g $table
 					echo $'Record(s) updated successfully!'
 				fi
 		else
