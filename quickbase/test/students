@@ -1,7 +1,5 @@
-(PK)ID(int) name(string) grade(int) 
- 
-1 MICHEAL 10  
-2 shrief 100  
- 
-3 Ali 200  
-4 zaki 400 
+(PK)ID(int) name(string) grade(int)
+1 MICHEAL 10
+2 shrief 100
+3 Ali 200
+4 zaki 400
